@@ -18,7 +18,6 @@ public class UserService {
 	@Transactional
 	public User createUser(UserSaveInputModelDTO dto) {
 		User user = dto.convertUser();
-		
 		return repository.save(user);
 	}
 

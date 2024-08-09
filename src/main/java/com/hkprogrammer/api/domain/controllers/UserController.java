@@ -1,7 +1,6 @@
 package com.hkprogrammer.api.domain.controllers;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,8 +24,6 @@ public class UserController {
 	@PostMapping("/register")
 	public ResponseEntity<User> createUser(@RequestBody @Valid UserSaveInputModelDTO dto) {
 		User user = service.createUser(dto);
-		
-		
 		return ResponseEntity.status(HttpStatus.CREATED).body(user);
 	}
 	
