@@ -1,3 +1,11 @@
 spring:
-  application:
-    name: cuidapet-api
+  profiles:
+    active: dev
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 1000
