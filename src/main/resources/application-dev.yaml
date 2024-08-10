@@ -6,4 +6,15 @@ spring:
     url: jdbc:mysql://localhost:3306/cuidapet_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&useTimezone=true
     username: root
     password: 123456
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:3000/realms/dev
+          jwk-set-uri: http://localhost:3000/realms/dev/protocol/openid-connect/certs
+keycloak:
+  url-login: http://localhost:3000/realms/dev/protocol/openid-connect/token
+  client-id: app_cuidapet
+  grant-type: password
 jwtSecret: yfiAQyDNAcj4tTf2fsYSzfUP729i7oKxsRn3s0Ruk40IJGBi80
+  
