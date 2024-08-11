@@ -15,6 +15,9 @@ spring:
 keycloak:
   url-login: http://localhost:3000/realms/dev/protocol/openid-connect/token
   client-id: app_cuidapet
+  auth-server-url: http://localhost:3000
+  client-secret: 4nUW5YFRFxhJmcqClgL6WJsUJ0lg6gYR
   grant-type: password
+  realm: dev
 jwtSecret: yfiAQyDNAcj4tTf2fsYSzfUP729i7oKxsRn3s0Ruk40IJGBi80
   

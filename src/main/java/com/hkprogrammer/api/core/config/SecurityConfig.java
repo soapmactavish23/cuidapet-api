@@ -18,7 +18,6 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(new JWTConverter())));
 
-		
 		http.authorizeRequests()
 			.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
 			.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();		
