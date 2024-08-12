@@ -16,7 +16,8 @@ keycloak:
   url-login: http://localhost:3000/realms/dev/protocol/openid-connect/token
   client-id: app_cuidapet
   auth-server-url: http://localhost:3000
-  client-secret: 4nUW5YFRFxhJmcqClgL6WJsUJ0lg6gYR
+  client-id-admin: admin-cli
+  client-admin-secret: Qx9GVCUg9jx2qv1cZV8yGH2Poa75BRaX
   grant-type: password
   realm: dev
 jwtSecret: yfiAQyDNAcj4tTf2fsYSzfUP729i7oKxsRn3s0Ruk40IJGBi80

@@ -1,5 +1,4 @@
-package com.hkprogrammer.
-api.core.security;
+package com.hkprogrammer.api.core.security;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,26 +31,27 @@ public class AuthKeycloakService {
 
 	@Value("${keycloak.url-login}")
 	private String urlLogin;
-	
+
 	@Value("${keycloak.auth-server-url}")
-    private String keycloakAuthServerUrl;
+	private String keycloakAuthServerUrl;
 
-    @Value("${keycloak.realm}")
-    private String realm;
-    
-    @Value("${keycloak.client-secret}")
-    private String clientSecret;
+	@Value("${keycloak.realm}")
+	private String realm;
 
-    private final RestTemplate restTemplate;
-    
-    public AuthKeycloakService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+	@Value("${keycloak.client-id-admin}")
+	private String clientIdAdmin;
+	
+	@Value("${keycloak.client-admin-secret}")
+	private String clientSecret;
+
+	private final RestTemplate restTemplate;
+
+	public AuthKeycloakService(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 
 	public String token(AuthLogin authLogin) {
-
 		try {
-			
 			HttpHeaders headers = new HttpHeaders();
 			RestTemplate rt = new RestTemplate();
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -68,62 +68,64 @@ public class AuthKeycloakService {
 			var result = rt.postForEntity(urlLogin, entity, String.class);
 
 			return result.getBody();
-			
 		} catch (Exception e) {
 			log.error("ERRO AO AUTENTICAR: ".concat(e.getMessage()));
 			throw new AuthCredentialException("Usuário ou senha inválidos");
 		}
 	}
-	
+
 	public void createUser(String username, String password) {
-	    try {
-	        String accessToken = getAccessToken();
-	        
-	        String url = String.format("%s/admin/realms/%s/users", keycloakAuthServerUrl, realm);
+		try {
+			String accessToken = getAccessToken();
 
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.APPLICATION_JSON);
-	        headers.setBearerAuth(accessToken);
-	        
-	        Map<String, Object> user = new HashMap<>();
-	        user.put("username", username);
-	        user.put("email", username);
-	        user.put("enabled", true);
-	        
-	        Map<String, Object> credentials = new HashMap<>();
-	        credentials.put("type", "password");
-	        credentials.put("value", password);
-	        credentials.put("temporary", false);
-	        
-	        user.put("credentials", List.of(credentials));
+			String url = String.format("%s/admin/realms/%s/users", keycloakAuthServerUrl, realm);
 
-	        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(user, headers);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.setBearerAuth(accessToken);
 
-	        restTemplate.postForEntity(url, entity, String.class);
-	    } catch (Exception e) {
-	        log.error("ERRO AO REGISTRAR USUÁRIO: ".concat(e.getMessage()));
-	        throw new GenericException("Erro ao registrar usuário");
-	    }
+			Map<String, Object> user = new HashMap<>();
+			user.put("username", username);
+			user.put("email", username);
+			user.put("enabled", true);
+
+			Map<String, Object> credentials = new HashMap<>();
+			credentials.put("type", "password");
+			credentials.put("value", password);
+			credentials.put("temporary", false);
+
+			user.put("credentials", List.of(credentials));
+
+			HttpEntity<Map<String, Object>> entity = new HttpEntity<>(user, headers);
+
+			restTemplate.postForEntity(url, entity, String.class);
+		} catch (Exception e) {
+			log.error("ERRO AO REGISTRAR USUÁRIO: ".concat(e.getMessage()));
+			throw new GenericException("Erro ao registrar usuário");
+		}
 	}
 
-
-	
 	@SuppressWarnings("unchecked")
 	private String getAccessToken() {
-	    String url = String.format("%s/realms/%s/protocol/openid-connect/token", keycloakAuthServerUrl, realm);
-	    
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		String url = String.format("%s/realms/%s/protocol/openid-connect/token", keycloakAuthServerUrl, realm);
 
-	    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-	    body.add("grant_type", "client_credentials");
-	    body.add("client_id", clientId);
-	    body.add("client_secret", clientSecret);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-	    HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+		body.add("grant_type", "client_credentials");
+		body.add("client_id", clientIdAdmin);
+		body.add("client_secret", clientSecret);
 
-	    Map<String, Object> response = restTemplate.postForObject(url, entity, Map.class);
-	    return (String) response.get("access_token");
+		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+
+		try {
+			Map<String, Object> response = restTemplate.postForObject(url, entity, Map.class);
+			return (String) response.get("access_token");
+		} catch (Exception e) {
+			log.error("Erro ao obter o token de acesso: ", e);
+			throw new GenericException("Erro ao obter o token de acesso");
+		}
 	}
 
 }
