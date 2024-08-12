@@ -26,8 +26,23 @@ public class UserService {
 		return repository.save(user);
 	}
 	
-	public String token(AuthLogin authLogin) {
+	public String loginWithEmailAndPassword(AuthLogin authLogin) {
 		return authKeycloakService.token(authLogin);
+	}
+	
+	public String loginWithSocial(String email, String avatar, String socialType, String socialKey) {
+		User user = findByEmail(email);
+		if(user == null) {
+			String password = System.currentTimeMillis() + "";
+			createUser(new UserSaveInputModelDTO(email, password, null));
+			return loginWithEmailAndPassword(new AuthLogin(email, password));
+		} else {
+			return loginWithEmailAndPassword(new AuthLogin(user.getEmail(), user.getPassword())); 
+		}
+	}
+	
+	private User findByEmail(String email) {
+		return repository.findByEmail(email).orElse(null);
 	}
 
 }
