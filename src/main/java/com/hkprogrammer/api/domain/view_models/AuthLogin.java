@@ -1,4 +1,4 @@
-package com.hkprogrammer.api.domain.models.dto;
+package com.hkprogrammer.api.domain.view_models;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

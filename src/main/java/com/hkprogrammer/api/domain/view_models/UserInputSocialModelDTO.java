@@ -1,6 +1,7 @@
-package com.hkprogrammer.api.domain.models.dto;
+package com.hkprogrammer.api.domain.view_models;
 
 import com.hkprogrammer.api.domain.models.User;
+import com.hkprogrammer.api.domain.models.enums.RegisterType;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,7 +27,8 @@ public class UserInputSocialModelDTO {
 		user.setEmail(email);
 		user.setImageAvatar(avatar);
 		user.setSocialKey(socialKey);
-		user.setSocialKey(socialKey);
+		user.setRegisterType(RegisterType.valueOf(socialType.toUpperCase()));
+		user.setPassword(email);
 		return user;
 	}
 

@@ -1,12 +1,15 @@
 package com.hkprogrammer.api.domain.services;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
 import com.hkprogrammer.api.core.security.AuthKeycloakService;
 import com.hkprogrammer.api.domain.models.User;
-import com.hkprogrammer.api.domain.models.dto.AuthLogin;
-import com.hkprogrammer.api.domain.models.dto.UserSaveInputModelDTO;
 import com.hkprogrammer.api.domain.repositories.UserRepository;
+import com.hkprogrammer.api.domain.view_models.AuthLogin;
+import com.hkprogrammer.api.domain.view_models.UserInputSocialModelDTO;
+import com.hkprogrammer.api.domain.view_models.UserSaveInputModelDTO;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -22,22 +25,23 @@ public class UserService {
 	@Transactional
 	public User createUser(UserSaveInputModelDTO dto) {
 		User user = dto.convertUser();
-		authKeycloakService.createUser(dto.getEmail(), dto.getPassword());
+		authKeycloakService.createUser(user.getEmail(), user.getPassword());
 		return repository.save(user);
 	}
 	
-	public String loginWithEmailAndPassword(AuthLogin authLogin) {
+	public Map<String, String> loginWithEmailAndPassword(AuthLogin authLogin) {
 		return authKeycloakService.token(authLogin);
 	}
 	
-	public String loginWithSocial(String email, String avatar, String socialType, String socialKey) {
-		User user = findByEmail(email);
+	public String loginWithSocial(UserInputSocialModelDTO dto) {
+		User user = findByEmail(dto.getEmail());
 		if(user == null) {
-			String password = System.currentTimeMillis() + "";
-			createUser(new UserSaveInputModelDTO(email, password, null));
-			return loginWithEmailAndPassword(new AuthLogin(email, password));
+			user = dto.convertToUser();
+			authKeycloakService.createUser(user.getEmail(), user.getPassword());
+			user = repository.save(user);
+			return loginWithEmailAndPassword(new AuthLogin(user.getEmail(), user.getEmail()));
 		} else {
-			return loginWithEmailAndPassword(new AuthLogin(user.getEmail(), user.getPassword())); 
+			return loginWithEmailAndPassword(new AuthLogin(user.getEmail(), user.getEmail())); 
 		}
 	}
 	

@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.hkprogrammer.api.core.exception.AuthCredentialException;
 import com.hkprogrammer.api.core.exception.GenericException;
-import com.hkprogrammer.api.domain.models.dto.AuthLogin;
+import com.hkprogrammer.api.domain.view_models.AuthLogin;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -86,6 +86,9 @@ public class AuthKeycloakService {
 
 			Map<String, Object> user = new HashMap<>();
 			user.put("username", username);
+			user.put("email", username);
+			user.put("firstName", username);
+			user.put("lastName", username);
 			user.put("email", username);
 			user.put("enabled", true);
 

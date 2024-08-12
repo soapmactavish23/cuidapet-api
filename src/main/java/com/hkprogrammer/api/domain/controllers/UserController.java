@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hkprogrammer.api.domain.models.User;
-import com.hkprogrammer.api.domain.models.dto.AuthLogin;
-import com.hkprogrammer.api.domain.models.dto.UserSaveInputModelDTO;
 import com.hkprogrammer.api.domain.services.UserService;
+import com.hkprogrammer.api.domain.view_models.AuthLogin;
+import com.hkprogrammer.api.domain.view_models.UserInputSocialModelDTO;
+import com.hkprogrammer.api.domain.view_models.UserSaveInputModelDTO;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -28,9 +29,15 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(user);
 	}
 	
-	@PostMapping("/login")
+	@PostMapping("/login/email-and-password")
 	public ResponseEntity<String> loginWithEmailAndPassword(@RequestBody @Valid AuthLogin authLogin) {
 		String token = service.loginWithEmailAndPassword(authLogin);
+		return ResponseEntity.ok(token);
+	}
+	
+	@PostMapping("/login/social")
+	public ResponseEntity<String> loginSocial(@RequestBody @Valid UserInputSocialModelDTO dto) {
+		String token = service.loginWithSocial(dto);
 		return ResponseEntity.ok(token);
 	}
 	
