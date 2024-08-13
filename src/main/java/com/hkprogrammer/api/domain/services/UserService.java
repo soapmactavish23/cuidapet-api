@@ -1,7 +1,5 @@
 package com.hkprogrammer.api.domain.services;
 
-import java.util.Map;
-
 import org.springframework.stereotype.Service;
 
 import com.hkprogrammer.api.core.security.AuthKeycloakService;
@@ -29,7 +27,7 @@ public class UserService {
 		return repository.save(user);
 	}
 	
-	public Map<String, String> loginWithEmailAndPassword(AuthLogin authLogin) {
+	public String loginWithEmailAndPassword(AuthLogin authLogin) {
 		return authKeycloakService.token(authLogin);
 	}
 	
