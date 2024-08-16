@@ -1,11 +1,11 @@
 package com.hkprogrammer.api.domain.controllers;
 
+import com.hkprogrammer.api.domain.view_models.UserConfirmInputModel;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import com.hkprogrammer.api.domain.models.User;
 import com.hkprogrammer.api.domain.services.UserService;
@@ -39,6 +39,12 @@ public class UserController {
 	public ResponseEntity<String> loginSocial(@RequestBody @Valid UserInputSocialModelDTO dto) {
 		String token = service.loginWithSocial(dto);
 		return ResponseEntity.ok(token);
+	}
+
+	@PatchMapping("/confirm")
+	public ResponseEntity<String> confirmLogin(@RequestBody @Valid UserConfirmInputModel dto) {
+		String newAccessToken = service.confirmLogin(dto);
+		return ResponseEntity.ok(newAccessToken);
 	}
 	
 }

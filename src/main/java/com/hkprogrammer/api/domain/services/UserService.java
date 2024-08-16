@@ -1,16 +1,18 @@
 package com.hkprogrammer.api.domain.services;
 
-import org.springframework.stereotype.Service;
-
 import com.hkprogrammer.api.core.security.AuthKeycloakService;
 import com.hkprogrammer.api.domain.models.User;
 import com.hkprogrammer.api.domain.repositories.UserRepository;
 import com.hkprogrammer.api.domain.view_models.AuthLogin;
+import com.hkprogrammer.api.domain.view_models.UserConfirmInputModel;
 import com.hkprogrammer.api.domain.view_models.UserInputSocialModelDTO;
 import com.hkprogrammer.api.domain.view_models.UserSaveInputModelDTO;
-
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.http.parser.Authorization;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
@@ -45,6 +47,23 @@ public class UserService {
 	
 	private User findByEmail(String email) {
 		return repository.findByEmail(email).orElse(null);
+	}
+
+	private User findById(Integer id) {
+		return repository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
+	}
+
+	@Transactional
+	public String confirmLogin(UserConfirmInputModel inputModel) {
+		User user = findById(inputModel.getUserId());
+		String newRefreshToken = authKeycloakService.refreshAccessToken(inputModel.getRefreshToken());
+		user.setRefreshToken(newRefreshToken);
+		user.setIosToken(inputModel.getIosDeviceToken());
+		user.setAndroidToken(inputModel.getAndroidDeviceToken());
+
+		user = repository.save(user);
+
+		return user.getRefreshToken();
 	}
 
 }

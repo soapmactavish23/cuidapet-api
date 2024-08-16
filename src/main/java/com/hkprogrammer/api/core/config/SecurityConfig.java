@@ -20,7 +20,8 @@ public class SecurityConfig {
 
 		http.authorizeRequests()
 			.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
-			.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();		
+			.requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+			.requestMatchers(HttpMethod.PATCH, "/auth/confirm").hasRole("USER");
 
 		return http.build();
 	}

@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -129,6 +127,28 @@ public class AuthKeycloakService {
 			log.error("Erro ao obter o token de acesso: ", e);
 			throw new GenericException("Erro ao obter o token de acesso");
 		}
+	}
+
+	public String refreshAccessToken(String refreshToken) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+		body.add("grant_type", "refresh_token");
+		body.add("clientId", clientId);
+		body.add("client_secret", clientSecret);
+		body.add("refresh_token", refreshToken);
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+		ResponseEntity<String> response = restTemplate.exchange(urlLogin, HttpMethod.POST, request, String.class);
+
+		if(response.getStatusCode() == HttpStatus.OK) {
+			return response.getBody();
+		} else {
+			throw new GenericException("Erro ao obter o refreshToken");
+		}
+
 	}
 
 }
