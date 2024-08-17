@@ -102,7 +102,7 @@ public class AuthKeycloakService {
 			restTemplate.postForEntity(url, entity, String.class);
 		} catch (Exception e) {
 			log.error("ERRO AO REGISTRAR USUÁRIO: ".concat(e.getMessage()));
-			throw new GenericException("Erro ao registrar usuário");
+			throw new AuthCredentialException("Erro ao registrar usuário");
 		}
 	}
 
@@ -125,30 +125,32 @@ public class AuthKeycloakService {
 			return (String) response.get("access_token");
 		} catch (Exception e) {
 			log.error("Erro ao obter o token de acesso: ", e);
-			throw new GenericException("Erro ao obter o token de acesso");
+			throw new AuthCredentialException("Erro ao obter o token de acesso");
 		}
 	}
 
 	public String refreshAccessToken(String refreshToken) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			RestTemplate rt = new RestTemplate();
+			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-		body.add("grant_type", "refresh_token");
-		body.add("clientId", clientId);
-		body.add("client_secret", clientSecret);
-		body.add("refresh_token", refreshToken);
+			MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+			formData.add("grant_type", "refresh_token");
+			formData.add("client_id", clientId);
+			formData.add("client_secret", clientSecret);
+			formData.add("refresh_token", refreshToken);
 
-		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+			HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(formData,
+					headers);
 
-		ResponseEntity<String> response = restTemplate.exchange(urlLogin, HttpMethod.POST, request, String.class);
-
-		if(response.getStatusCode() == HttpStatus.OK) {
-			return response.getBody();
-		} else {
-			throw new GenericException("Erro ao obter o refreshToken");
+			var result = rt.postForEntity(urlLogin, entity, String.class);
+			return result.getBody();
+		} catch (Exception e) {
+			String message = "Erro ao obter o refreshToken";
+			log.error(message.toUpperCase().concat(": ") + e.getMessage());
+			throw new AuthCredentialException("Erro ao obter o refreshToken");
 		}
-
 	}
 
 }
