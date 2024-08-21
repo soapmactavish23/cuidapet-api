@@ -1,18 +1,22 @@
 package com.hkprogrammer.api.domain.services;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import com.hkprogrammer.api.core.security.AuthKeycloakService;
 import com.hkprogrammer.api.domain.models.User;
 import com.hkprogrammer.api.domain.repositories.UserRepository;
 import com.hkprogrammer.api.domain.view_models.AuthLogin;
+import com.hkprogrammer.api.domain.view_models.UpdateUrlAvatarViewModel;
 import com.hkprogrammer.api.domain.view_models.UserConfirmInputModel;
 import com.hkprogrammer.api.domain.view_models.UserInputSocialModelDTO;
 import com.hkprogrammer.api.domain.view_models.UserSaveInputModelDTO;
+
+import ch.qos.logback.core.joran.util.beans.BeanUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.util.http.parser.Authorization;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
@@ -27,6 +31,15 @@ public class UserService {
 		User user = dto.convertUser();
 		authKeycloakService.createUser(user.getEmail(), user.getPassword());
 		return repository.save(user);
+	}
+	
+	@GetMapping
+	public User update(User user) {
+		User userSaved = findById(user.getId());
+		
+		BeanUtils.copyProperties(user, userSaved, "id");
+		
+		return repository.save(userSaved);
 	}
 	
 	public String loginWithEmailAndPassword(AuthLogin authLogin) {
@@ -64,6 +77,12 @@ public class UserService {
 		user = repository.save(user);
 
 		return user.getRefreshToken();
+	}
+	
+	public User updateUrlAvatar(UpdateUrlAvatarViewModel inputModel) {
+		User user = findById(inputModel.getUserId());
+		user.setImageAvatar(inputModel.getUrlAvatar());
+		return update(user);
 	}
 
 }
