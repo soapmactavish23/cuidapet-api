@@ -7,14 +7,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.hkprogrammer.api.core.security.AuthKeycloakService;
 import com.hkprogrammer.api.domain.models.User;
+import com.hkprogrammer.api.domain.models.enums.Platform;
 import com.hkprogrammer.api.domain.repositories.UserRepository;
 import com.hkprogrammer.api.domain.view_models.AuthLogin;
+import com.hkprogrammer.api.domain.view_models.UpdateTokenDeviceInputModel;
 import com.hkprogrammer.api.domain.view_models.UpdateUrlAvatarViewModel;
 import com.hkprogrammer.api.domain.view_models.UserConfirmInputModel;
 import com.hkprogrammer.api.domain.view_models.UserInputSocialModelDTO;
 import com.hkprogrammer.api.domain.view_models.UserSaveInputModelDTO;
 
-import ch.qos.logback.core.joran.util.beans.BeanUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -83,6 +84,21 @@ public class UserService {
 		User user = findById(inputModel.getUserId());
 		user.setImageAvatar(inputModel.getUrlAvatar());
 		return update(user);
+	}
+	
+	public User updateDeviceToken(UpdateTokenDeviceInputModel inputModel) {
+		User user = findById(inputModel.getUserId());
+		
+		if(inputModel.getPlatform() == Platform.ANDROID) {
+			user.setAndroidToken(inputModel.getToken());
+			user.setIosToken(null);
+		} else {
+			user.setAndroidToken(null);
+			user.setIosToken(inputModel.getToken());
+		}
+		
+		return update(user);
+		
 	}
 
 }

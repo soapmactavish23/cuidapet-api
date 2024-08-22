@@ -2,8 +2,10 @@ package com.hkprogrammer.api.domain.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hkprogrammer.api.domain.models.User;
 import com.hkprogrammer.api.domain.services.UserService;
 import com.hkprogrammer.api.domain.view_models.AuthLogin;
+import com.hkprogrammer.api.domain.view_models.UpdateTokenDeviceInputModel;
 import com.hkprogrammer.api.domain.view_models.UpdateUrlAvatarViewModel;
 import com.hkprogrammer.api.domain.view_models.UserConfirmInputModel;
 import com.hkprogrammer.api.domain.view_models.UserInputSocialModelDTO;
@@ -50,8 +53,15 @@ public class UserController {
 		return ResponseEntity.ok(newAccessToken);
 	}
 	
+	@PutMapping("/avatar")
 	public ResponseEntity<User> updateUrlAvatar(@RequestBody @Valid UpdateUrlAvatarViewModel inputModel) {
 		User user = service.updateUrlAvatar(inputModel);
+		return ResponseEntity.ok(user);
+	}
+	
+	@PutMapping("/device")
+	public ResponseEntity<User> updateDeviceToken(@RequestBody @Valid UpdateTokenDeviceInputModel inputMode) {
+		User user = service.updateDeviceToken(inputMode);
 		return ResponseEntity.ok(user);
 	}
 	
