@@ -1,8 +1,10 @@
 package com.hkprogrammer.api.domain.services;
 
+import com.hkprogrammer.api.domain.models.Supplier;
 import com.hkprogrammer.api.domain.models.dto.SupplierNearbyMeDto;
 import com.hkprogrammer.api.domain.repositories.SupplierRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +17,10 @@ public class SupplierService {
 
     public List<SupplierNearbyMeDto> findNearByMe(Double lat, Double lng) {
         return repository.findNearByPosition(lat, lng, 5000);
+    }
+
+    public Supplier findById(Integer id) {
+        return repository.findbyIdLatLng(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
 }

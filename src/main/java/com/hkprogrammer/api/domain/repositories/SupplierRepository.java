@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
@@ -16,5 +17,8 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
             "sin(RADIANS(?1)) * sin(radians(ST_X(f.latlng))) )) \n" +
             "As distancia from fornecedor f having distancia <= ?3", nativeQuery = true)
     public List<SupplierNearbyMeDto> findNearByPosition(Double lat, Double lng, Integer distance);
+
+    @Query(value = "SELECT ST_X(f.latlng) as lat, ST_Y(f.latlng) as lng, f.* FROM fornecedor f WHERE id = ?1", nativeQuery = true)
+    public Optional<Supplier> findbyIdLatLng(Integer id);
 
 }
