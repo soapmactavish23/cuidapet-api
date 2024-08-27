@@ -18,7 +18,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
             "As distancia from fornecedor f having distancia <= ?3", nativeQuery = true)
     public List<SupplierNearbyMeDto> findNearByPosition(Double lat, Double lng, Integer distance);
 
-    @Query(value = "SELECT ST_X(f.latlng) as lat, ST_Y(f.latlng) as lng, f.* FROM fornecedor f WHERE id = ?1", nativeQuery = true)
-    public Optional<Supplier> findbyIdLatLng(Integer id);
+//    @Query(value = "SELECT ST_X(f.latlng) as lat, ST_Y(f.latlng) as lng, f.* FROM fornecedor f WHERE id = ?1", nativeQuery = true)
+//    public Optional<Supplier> findbyIdLatLng(Integer id);
 
 }

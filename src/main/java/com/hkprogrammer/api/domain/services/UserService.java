@@ -58,6 +58,10 @@ public class UserService {
 			return loginWithEmailAndPassword(new AuthLogin(user.getEmail(), user.getEmail())); 
 		}
 	}
+
+	public Boolean existsUserByEmail(String email) {
+		return repository.existsUserByEmail(email);
+	}
 	
 	private User findByEmail(String email) {
 		return repository.findByEmail(email).orElse(null);

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.hibernate.annotations.Formula;
 
 @Data
 @Entity
@@ -31,10 +32,10 @@ public class Supplier {
     @Column(name = "telefone")
     private String phone;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Formula("ST_X(latlng)")
     private Double lat;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Formula("ST_X(latlng)")
     private Double lng;
 
     @NotNull
