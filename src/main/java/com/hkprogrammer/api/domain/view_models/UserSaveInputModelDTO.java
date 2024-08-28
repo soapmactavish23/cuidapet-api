@@ -1,5 +1,6 @@
 package com.hkprogrammer.api.domain.view_models;
 
+import com.hkprogrammer.api.domain.models.Supplier;
 import com.hkprogrammer.api.domain.models.User;
 import com.hkprogrammer.api.domain.models.enums.RegisterType;
 

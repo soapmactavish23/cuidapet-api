@@ -3,7 +3,9 @@ package com.hkprogrammer.api.domain.controllers;
 import com.hkprogrammer.api.domain.models.Supplier;
 import com.hkprogrammer.api.domain.models.dto.SupplierNearbyMeDto;
 import com.hkprogrammer.api.domain.services.SupplierService;
+import com.hkprogrammer.api.domain.view_models.CreateSupplierUserViewModel;
 import com.hkprogrammer.api.domain.view_models.SupplierServiceViewModel;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +47,12 @@ public class SupplierController {
         } else {
             return ResponseEntity.noContent().build();
         }
+    }
+
+    @PostMapping("/user")
+    public ResponseEntity<Supplier> createNewUser(@RequestBody @Valid CreateSupplierUserViewModel viewModel) {
+        Supplier obj = service.createUserSupplier(viewModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(obj);
     }
 
 }
