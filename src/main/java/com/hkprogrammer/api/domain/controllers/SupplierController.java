@@ -5,8 +5,10 @@ import com.hkprogrammer.api.domain.models.dto.SupplierNearbyMeDto;
 import com.hkprogrammer.api.domain.services.SupplierService;
 import com.hkprogrammer.api.domain.view_models.CreateSupplierUserViewModel;
 import com.hkprogrammer.api.domain.view_models.SupplierServiceViewModel;
+import com.hkprogrammer.api.domain.view_models.SupplierUpdateInputModel;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +17,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/fornecedores")
+@RequestMapping("/suppliers")
 public class SupplierController {
 
     private final SupplierService service;
@@ -53,6 +55,12 @@ public class SupplierController {
     public ResponseEntity<Supplier> createNewUser(@RequestBody @Valid CreateSupplierUserViewModel viewModel) {
         Supplier obj = service.createUserSupplier(viewModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(obj);
+    }
+
+    @PutMapping()
+    public ResponseEntity<Supplier> update(@RequestBody @Valid SupplierUpdateInputModel inputModel) {
+        Supplier obj = service.update(inputModel);
+        return ResponseEntity.ok(obj);
     }
 
 }

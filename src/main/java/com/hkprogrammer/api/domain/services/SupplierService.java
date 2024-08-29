@@ -1,14 +1,17 @@
 package com.hkprogrammer.api.domain.services;
 
+import com.hkprogrammer.api.domain.models.Category;
 import com.hkprogrammer.api.domain.models.Supplier;
 import com.hkprogrammer.api.domain.models.dto.SupplierNearbyMeDto;
 import com.hkprogrammer.api.domain.repositories.SupplierRepository;
 import com.hkprogrammer.api.domain.repositories.SupplierServiceRepository;
 import com.hkprogrammer.api.domain.view_models.CreateSupplierUserViewModel;
 import com.hkprogrammer.api.domain.view_models.SupplierServiceViewModel;
+import com.hkprogrammer.api.domain.view_models.SupplierUpdateInputModel;
 import com.hkprogrammer.api.domain.view_models.UserSaveInputModelDTO;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +58,13 @@ public class SupplierService {
 
         return supplierEntity;
 
+    }
+
+    public Supplier update(SupplierUpdateInputModel inputModel) {
+        Supplier objSaved = findById(inputModel.getSupplierId());
+        Supplier obj = inputModel.convert();
+        BeanUtils.copyProperties(obj, objSaved, "id");
+        return save(objSaved);
     }
 
     private Supplier save(Supplier supplier) {
