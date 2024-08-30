@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "agendamentos")
+@Table(name = "agendamento")
 public class Schedule {
 
     @Id
@@ -51,8 +51,8 @@ public class Schedule {
     @NotEmpty
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "agendamento_servicos",
-            joinColumns = @JoinColumn(name = "agendamento"),
-            inverseJoinColumns = @JoinColumn(name = "fornecedor_servicos"))
+            joinColumns = @JoinColumn(name = "agendamento_id"),
+            inverseJoinColumns = @JoinColumn(name = "fornecedor_servicos_id"))
     private List<SupplierService> services;
 
     @PrePersist
