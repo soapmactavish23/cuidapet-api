@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.hkprogrammer.api.core.security.JWTConverter;
@@ -12,7 +13,7 @@ import com.hkprogrammer.api.core.security.JWTConverter;
 public class SecurityConfig {
 
 	@Bean
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "removal" })
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 		http.csrf(csrf -> csrf.disable())
@@ -20,8 +21,10 @@ public class SecurityConfig {
 
 		http.authorizeRequests()
 			.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
-			.requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-			.requestMatchers(HttpMethod.PATCH, "/auth/confirm").hasRole("USER");
+			.requestMatchers(HttpMethod.POST, "/auth/login/**").permitAll()
+			.requestMatchers(HttpMethod.PATCH, "/auth/confirm").hasRole("USER")
+			.requestMatchers(HttpMethod.GET, "/agendamentos").hasRole("USER").anyRequest()
+			.authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		return http.build();
 	}

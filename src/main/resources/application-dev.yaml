@@ -10,15 +10,15 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:3000/realms/dev
-          jwk-set-uri: http://localhost:3000/realms/dev/protocol/openid-connect/certs
+          issuer-uri: https://hksntech.com.br:8443/realms/cuidapet
+          jwk-set-uri: https://hksntech.com.br:8443/realms/cuidapet/protocol/openid-connect/certs
 keycloak:
-  url-login: http://localhost:3000/realms/dev/protocol/openid-connect/token
+  url-login: https://hksntech.com.br:8443/realms/cuidapet/protocol/openid-connect/token
   client-id: app_cuidapet
-  auth-server-url: http://localhost:3000
-  client-id-admin: admin-cli
-  client-admin-secret: Qx9GVCUg9jx2qv1cZV8yGH2Poa75BRaX
+  auth-server-url: https://hksntech.com.br:8443
+  client-id-admin: admin_cuidapet
+  client-admin-secret: SHN6BDnUGXBeMP6kz0cO1wB8fTPDwbLc
   grant-type: password
-  realm: dev
+  realm: cuidapet
 jwtSecret: yfiAQyDNAcj4tTf2fsYSzfUP729i7oKxsRn3s0Ruk40IJGBi80
   

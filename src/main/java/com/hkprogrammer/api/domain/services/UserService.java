@@ -63,8 +63,12 @@ public class UserService {
 		return repository.existsUserByEmail(email);
 	}
 	
-	private User findByEmail(String email) {
+	public User findByEmail(String email) {
 		return repository.findByEmail(email).orElse(null);
+	}
+
+	public User findByEmailOrElseThrow(String email) {
+		return repository.findByEmail(email).orElseThrow(() -> new EmptyResultDataAccessException(1));
 	}
 
 	private User findById(Integer id) {

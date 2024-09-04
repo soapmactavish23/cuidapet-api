@@ -8,7 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -29,9 +32,12 @@ public class ScheduleController {
     @PutMapping("/{scheduleId}/status/{status}")
     public void changeStatus(@PathVariable("scheduleId") Integer scheduleId,
                              @PathVariable("status") String status) {
-
         service.changeStatus(scheduleId, status);
+    }
 
+    @GetMapping()
+    public List<Schedule> findAllSchedulesByUser(Authentication authentication) {
+        return service.findAllSchedulesByUser(authentication);
     }
 
 }

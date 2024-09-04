@@ -6,6 +6,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -87,7 +90,6 @@ public class AuthKeycloakService {
 			user.put("email", username);
 			user.put("firstName", username);
 			user.put("lastName", username);
-			user.put("email", username);
 			user.put("enabled", true);
 
 			Map<String, Object> credentials = new HashMap<>();
@@ -99,10 +101,19 @@ public class AuthKeycloakService {
 
 			HttpEntity<Map<String, Object>> entity = new HttpEntity<>(user, headers);
 
-			restTemplate.postForEntity(url, entity, String.class);
+			// Cria o usuário e obtém a URI do novo usuário
+			var response = restTemplate.postForEntity(url, entity, String.class);
+			String locationHeader = response.getHeaders().getLocation().toString();
+
+			// Extrair o ID do usuário recém-criado da resposta
+			String userId = locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
+
+			// Atribuir ROLE_MAPPING ao usuário
+			assignRoleToUser(userId, "USER", accessToken);
+
 		} catch (Exception e) {
 			log.error("ERRO AO REGISTRAR USUÁRIO: ".concat(e.getMessage()));
-			throw new AuthCredentialException("Erro ao registrar usuário");
+			throw new GenericException("Erro ao registrar usuário");
 		}
 	}
 
@@ -151,6 +162,49 @@ public class AuthKeycloakService {
 			log.error(message.toUpperCase().concat(": ") + e.getMessage());
 			throw new AuthCredentialException("Erro ao obter o refreshToken");
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void assignRoleToUser(String userId, String roleName, String accessToken) {
+		try {
+			// URL para obter o ID do papel
+			String roleUrl = String.format("%s/admin/realms/%s/roles/%s", keycloakAuthServerUrl, realm, roleName);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.setBearerAuth(accessToken);
+
+			// Buscar o papel pelo nome
+			ResponseEntity<Map> roleResponse = restTemplate.exchange(roleUrl, HttpMethod.GET, new HttpEntity<>(headers), Map.class);
+			String roleId = (String) roleResponse.getBody().get("id");
+
+			String roleMappingUrl = String.format("%s/admin/realms/%s/users/%s/role-mappings/realm", keycloakAuthServerUrl, realm, userId);
+
+			// Adicionar o papel ao usuário
+			List<Map<String, String>> roles = List.of(
+					Map.of(
+							"id", roleId,
+							"name", roleName
+					)
+			);
+
+			HttpEntity<List<Map<String, String>>> roleEntity = new HttpEntity<>(roles, headers);
+			restTemplate.postForEntity(roleMappingUrl, roleEntity, String.class);
+		} catch (Exception e) {
+			log.error("ERRO AO ATRIBUIR PAPEL AO USUÁRIO: ".concat(e.getMessage()));
+			throw new GenericException("Erro ao atribuir papel ao usuário");
+		}
+	}
+
+	public String getEmailFromToken(Authentication authentication) {
+		if (authentication instanceof JwtAuthenticationToken) {
+			JwtAuthenticationToken jwtToken = (JwtAuthenticationToken) authentication;
+			Jwt jwt = jwtToken.getToken();
+			return jwt.getClaim("email");
+		} else {
+			throw new GenericException("Erro ao recuperar e-mail no token");
+		}
+
 	}
 
 }
