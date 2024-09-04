@@ -45,4 +45,9 @@ public class ScheduleService {
         return repository.findByUserIdOrderByScheduleDateDesc(userId);
     }
 
+     public List<Schedule> findAllSchedulesBySupplier(Authentication authentication) {
+         String email = authKeycloakService.getEmailFromToken(authentication);
+         Integer supplierId = userService.findByEmail(email).getId();
+        return repository.findBySupplierIdOrderByScheduleDateDesc(supplierId);
+     }
 }

@@ -35,9 +35,14 @@ public class ScheduleController {
         service.changeStatus(scheduleId, status);
     }
 
-    @GetMapping()
+    @GetMapping("/user")
     public List<Schedule> findAllSchedulesByUser(Authentication authentication) {
         return service.findAllSchedulesByUser(authentication);
+    }
+
+    @GetMapping("/supplier")
+    public List<Schedule> findAllSchedulesBySupplier(Authentication authentication) {
+        return service.findAllSchedulesBySupplier(authentication);
     }
 
 }

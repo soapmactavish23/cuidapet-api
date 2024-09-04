@@ -9,4 +9,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 
     List<Schedule> findByUserIdOrderByScheduleDateDesc(Integer id);
 
+    List<Schedule> findBySupplierIdOrderByScheduleDateDesc(Integer id);
+
 }
