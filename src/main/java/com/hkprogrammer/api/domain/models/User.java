@@ -6,15 +6,7 @@ import com.hkprogrammer.api.core.config.Constants;
 import com.hkprogrammer.api.core.security.Sha256;
 import com.hkprogrammer.api.domain.models.enums.RegisterType;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -55,9 +47,9 @@ public class User {
 	@Column(name = "img_avatar")
 	private String imageAvatar;
 	
-	//TODO: depois fazer relacionamento com fornecedor 
-	@Column(name = "fornecedor_id")
-	private Integer supplierId;
+	@ManyToOne
+	@JoinColumn(name = "fornecedor_id")
+	private Supplier supplier;
 	
 	@PrePersist
 	public void prePersist() {

@@ -28,7 +28,7 @@ public class ScheduleService {
         return repository.save(inputModel.convert());
     }
 
-    private Schedule findById(Integer id) {
+    public Schedule findById(Integer id) {
         return repository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 

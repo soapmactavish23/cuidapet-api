@@ -106,7 +106,10 @@ public class UserService {
 		}
 		
 		return update(user);
-		
+	}
+
+	public User findBySupplier(Integer id) {
+		return repository.findBySupplierId(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
 	}
 
 }
