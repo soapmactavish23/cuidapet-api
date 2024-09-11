@@ -59,6 +59,9 @@ dependencies {
 	//Location Tech
 	implementation 'org.locationtech.jts:jts-core:1.18.2'
 
+	//Firebase Admin SDK
+	implementation 'com.google.firebase:firebase-admin:8.0.1'
+
 }
 
 tasks.named('test') {

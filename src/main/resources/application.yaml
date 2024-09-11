@@ -9,3 +9,10 @@ spring:
       pageable:
         default-page-size: 10
         max-page-size: 1000
+
+firebase:
+  pathConfig: firebase-config.json
+  bucketName: cuidapet-c9cdf.appspot.com
+
+#cuidapet123@gmail.com
+#S3nh@d0$up0rt3

@@ -13,7 +13,7 @@ public class DeviceToken {
     private String android;
     private String ios;
 
-    List<String> getTokens() {
+    public List<String> getTokens() {
         var tokens = new ArrayList<String>();
         tokens.add(android);
         tokens.add(ios);
