@@ -2,6 +2,7 @@ package com.hkprogrammer.api.domain.services;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -112,4 +113,8 @@ public class UserService {
 		return repository.findBySupplierId(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
 	}
 
+	public User findByAuthentication(Authentication authentication) {
+		String email = authKeycloakService.getEmailFromToken(authentication);
+		return findByEmail(email);
+	}
 }
