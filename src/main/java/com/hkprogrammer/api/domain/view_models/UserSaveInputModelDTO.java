@@ -26,14 +26,19 @@ public class UserSaveInputModelDTO {
 	private Integer supplierId;
 	
 	public User convertUser() {
-		Supplier supplier = new Supplier();
-		supplier.setId(supplierId);
-
 		User user = new User();
 		user.setEmail(email);
 		user.setPassword(password);
 		user.setRegisterType(RegisterType.APP);
-		user.setSupplier(supplier);
+
+		if(supplierId != null) {
+			Supplier supplier = new Supplier();
+			supplier.setId(supplierId);
+			user.setSupplier(supplier);
+		} else {
+			user.setSupplier(null);
+		}
+
 		return user;
 	}
 	

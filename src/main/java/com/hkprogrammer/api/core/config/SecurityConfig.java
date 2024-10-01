@@ -22,6 +22,7 @@ public class SecurityConfig {
 		http.authorizeRequests()
 			.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
 			.requestMatchers(HttpMethod.POST, "/auth/login/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/auth/register/**").permitAll()
 			.requestMatchers(HttpMethod.PATCH, "/auth/confirm").hasRole("USER")
 			.requestMatchers(HttpMethod.GET, "/agendamentos").hasRole("USER").anyRequest()
 			.authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

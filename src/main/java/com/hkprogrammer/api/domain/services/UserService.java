@@ -1,5 +1,6 @@
 package com.hkprogrammer.api.domain.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.Authentication;
@@ -22,13 +23,13 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserService {
 	
 	private final UserRepository repository;
 	
 	private final AuthKeycloakService authKeycloakService;
-	
-	@Transactional
+
 	public User createUser(UserSaveInputModelDTO dto) {
 		User user = dto.convertUser();
 		authKeycloakService.createUser(user.getEmail(), user.getPassword());
