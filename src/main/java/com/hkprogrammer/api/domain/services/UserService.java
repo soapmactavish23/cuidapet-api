@@ -21,6 +21,8 @@ import com.hkprogrammer.api.domain.view_models.UserSaveInputModelDTO;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
+import java.util.Map;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -44,12 +46,18 @@ public class UserService {
 		
 		return repository.save(userSaved);
 	}
-	
-	public String loginWithEmailAndPassword(AuthLogin authLogin) {
-		return authKeycloakService.token(authLogin);
+
+	@Transactional
+	public Map<String, Object> loginWithEmailAndPassword(AuthLogin authLogin) {
+		Map<String, Object> completeToken = authKeycloakService.token(authLogin);
+
+		User user = findByEmail(authLogin.getEmail());
+		user.setRefreshToken(completeToken.get("refresh_token").toString());
+
+		return completeToken;
 	}
 	
-	public String loginWithSocial(UserInputSocialModelDTO dto) {
+	public Map<String, Object> loginWithSocial(UserInputSocialModelDTO dto) {
 		User user = findByEmail(dto.getEmail());
 		if(user == null) {
 			user = dto.convertToUser();
@@ -69,21 +77,17 @@ public class UserService {
 		return repository.findByEmail(email).orElse(null);
 	}
 
-	public User findByEmailOrElseThrow(String email) {
-		return repository.findByEmail(email).orElseThrow(() -> new EmptyResultDataAccessException(1));
-	}
-
 	private User findById(Integer id) {
 		return repository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
 	}
 
 	@Transactional
-	public String confirmLogin(UserConfirmInputModel inputModel) {
-		User user = findById(inputModel.getUserId());
-		String newRefreshToken = authKeycloakService.refreshAccessToken(inputModel.getRefreshToken());
+	public String confirmLogin(Authentication authentication, UserConfirmInputModel inputModel) {
+		User user = findByAuthentication(authentication);
+		String newRefreshToken = authKeycloakService.refreshAccessToken(user.getRefreshToken());
 		user.setRefreshToken(newRefreshToken);
-		user.setIosToken(inputModel.getIosDeviceToken());
-		user.setAndroidToken(inputModel.getAndroidDeviceToken());
+		user.setIosToken(inputModel.getIosToken());
+		user.setAndroidToken(inputModel.getAndroidToken());
 
 		user = repository.save(user);
 
@@ -110,12 +114,9 @@ public class UserService {
 		return update(user);
 	}
 
-	public User findBySupplier(Integer id) {
-		return repository.findBySupplierId(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
-	}
-
 	public User findByAuthentication(Authentication authentication) {
 		String email = authKeycloakService.getEmailFromToken(authentication);
 		return findByEmail(email);
 	}
+
 }

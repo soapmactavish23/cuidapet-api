@@ -22,6 +22,8 @@ import com.hkprogrammer.api.domain.view_models.UserSaveInputModelDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
+import java.util.Map;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/auth")
@@ -36,20 +38,20 @@ public class UserController {
 	}
 	
 	@PostMapping("/login/email-and-password")
-	public ResponseEntity<String> loginWithEmailAndPassword(@RequestBody @Valid AuthLogin authLogin) {
-		String token = service.loginWithEmailAndPassword(authLogin);
+	public ResponseEntity<Map<String, Object>> loginWithEmailAndPassword(@RequestBody @Valid AuthLogin authLogin) {
+		Map<String, Object> token = service.loginWithEmailAndPassword(authLogin);
 		return ResponseEntity.ok(token);
 	}
 	
 	@PostMapping("/login/social")
-	public ResponseEntity<String> loginSocial(@RequestBody @Valid UserInputSocialModelDTO dto) {
-		String token = service.loginWithSocial(dto);
+	public ResponseEntity<Map<String, Object>> loginSocial(@RequestBody @Valid UserInputSocialModelDTO dto) {
+		Map<String, Object> token = service.loginWithSocial(dto);
 		return ResponseEntity.ok(token);
 	}
 
 	@PatchMapping("/confirm")
-	public ResponseEntity<String> confirmLogin(@RequestBody @Valid UserConfirmInputModel dto) {
-		String newAccessToken = service.confirmLogin(dto);
+	public ResponseEntity<String> confirmLogin(Authentication authentication, @RequestBody @Valid UserConfirmInputModel dto) {
+		String newAccessToken = service.confirmLogin(authentication, dto);
 		return ResponseEntity.ok(newAccessToken);
 	}
 	

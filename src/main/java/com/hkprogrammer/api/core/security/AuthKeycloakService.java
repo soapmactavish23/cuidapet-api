@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -51,7 +52,7 @@ public class AuthKeycloakService {
 		this.restTemplate = restTemplate;
 	}
 
-	public String token(AuthLogin authLogin) {
+	public Map<String, Object> token(AuthLogin authLogin) {
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			RestTemplate rt = new RestTemplate();
@@ -63,12 +64,17 @@ public class AuthKeycloakService {
 			formData.add("password", authLogin.getPassword());
 			formData.add("grant_type", grantType);
 
-			HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(formData,
-					headers);
+			HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(formData, headers);
 
+			// Faz a requisição e obtém o corpo como String
 			var result = rt.postForEntity(urlLogin, entity, String.class);
+			String responseBody = result.getBody();
 
-			return result.getBody();
+			// Converte a String JSON para Map<String, Object>
+			ObjectMapper objectMapper = new ObjectMapper();
+			Map<String, Object> responseMap = objectMapper.readValue(responseBody, Map.class);
+
+			return responseMap;
 		} catch (Exception e) {
 			log.error("ERRO AO AUTENTICAR: ".concat(e.getMessage()));
 			throw new AuthCredentialException("Usuário ou senha inválidos");
