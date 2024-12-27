@@ -1,14 +1,10 @@
 package com.hkprogrammer.api.domain.controllers;
 
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.hkprogrammer.api.domain.models.User;
 import com.hkprogrammer.api.domain.services.UserService;
@@ -30,6 +26,12 @@ import java.util.Map;
 public class UserController {
 
 	private final UserService service;
+
+	@GetMapping("/user")
+	public ResponseEntity<User> loadUser(Authentication authentication) {
+		User user = service.findByAuthentication(authentication);
+		return ResponseEntity.ok(user);
+	}
 	
 	@PostMapping("/register")
 	public ResponseEntity<User> createUser(@RequestBody @Valid UserSaveInputModelDTO dto) {

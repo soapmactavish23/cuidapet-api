@@ -12,22 +12,23 @@ import com.hkprogrammer.api.core.security.JWTConverter;
 @Configuration
 public class SecurityConfig {
 
-	@Bean
-	@SuppressWarnings({ "deprecation", "removal" })
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Bean
+    @SuppressWarnings({"deprecation", "removal"})
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-		http.csrf(csrf -> csrf.disable())
-				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(new JWTConverter())));
+        http.csrf(csrf -> csrf.disable())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(new JWTConverter())));
 
-		http.authorizeRequests()
-			.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
-			.requestMatchers(HttpMethod.POST, "/auth/login/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/auth/register/**").permitAll()
-			.requestMatchers(HttpMethod.PATCH, "/auth/confirm").hasRole("USER")
-			.requestMatchers(HttpMethod.GET, "/agendamentos").hasRole("USER").anyRequest()
-			.authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.authorizeRequests()
+                .requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**",
+                        "/swagger-ui.html").permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/login/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/register/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/auth/confirm").hasRole("USER")
+                .requestMatchers(HttpMethod.GET, "/agendamentos").hasRole("USER").anyRequest()
+                .authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		return http.build();
-	}
+        return http.build();
+    }
 
 }
